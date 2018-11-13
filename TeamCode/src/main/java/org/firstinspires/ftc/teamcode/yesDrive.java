@@ -156,14 +156,14 @@ public class yesDrive extends OpMode {
         double Magnitude = abs(Speed) + abs(Turn) + abs(Strafe);
         Magnitude = (Magnitude > 1) ? Magnitude : 1; //Set scaling to keep -1,+1 range
 
-        Lf.setPower(scale((Speed + Turn - Strafe),
+        Lf.setPower(scale((-Speed + Turn - Strafe),
                 -Magnitude, +Magnitude, -MAX_SPEED, +MAX_SPEED));
 
         if (Lb != null) {
             Lb.setPower(scale((Speed + Turn + Strafe),
                     -Magnitude, +Magnitude, -MAX_SPEED, +MAX_SPEED));
         }
-        Rf.setPower(scale((Speed - Turn + Strafe),
+        Rf.setPower(scale((-Speed - Turn + Strafe),
                 -Magnitude, +Magnitude, -MAX_SPEED, +MAX_SPEED));
         if (Rb != null) {
             Rb.setPower(scale((Speed - Turn - Strafe),
