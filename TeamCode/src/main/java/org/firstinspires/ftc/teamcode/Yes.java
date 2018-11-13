@@ -38,7 +38,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.util.Locale;
 
-
+//john paul is gay
 @Autonomous(name = "Yes", group = "Sensor")
 //@Disabled                       // Comment this out to add to the opmode list
 public class Yes extends LinearOpMode {
