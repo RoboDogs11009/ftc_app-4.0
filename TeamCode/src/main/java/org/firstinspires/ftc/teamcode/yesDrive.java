@@ -95,14 +95,14 @@ public class yesDrive extends OpMode {
         holonomic(Speed, Turn, Strafe, MAX_SPEED );
 
         if (gamepad1.left_bumper){
-            Li.setPower(-0.7);
+            Li.setPower(-1);
         }
         else {
             Li.setPower(0);
         }
 
         if (gamepad1.right_bumper) {
-            Li.setPower(0.7);
+            Li.setPower(1);
         }
         else{
             Li.setPower(0);
