@@ -50,7 +50,7 @@ public class Yes extends LinearOpMode {
     private DcMotor Rf;
     private DcMotor Rb;
     private DcMotor Li;
-    private Servo S;
+   // private Servo S;
 
 
     //VU mark
@@ -67,9 +67,9 @@ public class Yes extends LinearOpMode {
 
     double strifePower = 0.4;
 
-    double distance;
-    double colorRed;
-    double colorBlue;
+   // double distance;
+   // double colorRed;
+    //double colorBlue;
     double drivePower = .7;
 
 
@@ -85,12 +85,12 @@ public class Yes extends LinearOpMode {
 
 
 
-    DistanceSensor sensorDistance;
+   // DistanceSensor sensorDistance;
 
 
 
-    DistanceSensor rightDistance;
-    DistanceSensor leftDistance;
+   // DistanceSensor rightDistance;
+   // DistanceSensor leftDistance;
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -740,8 +740,8 @@ public class Yes extends LinearOpMode {
 
     public void servo (double position, double timer)
     {
-        S.setPosition(0.5);
-        S.setPosition(position);
+        // S.setPosition(0.5);
+       // S.setPosition(position);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < timer)) {
 
