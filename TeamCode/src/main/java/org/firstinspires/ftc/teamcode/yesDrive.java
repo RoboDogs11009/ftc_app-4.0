@@ -115,10 +115,10 @@ public class yesDrive extends OpMode {
             MAX_SPEED = 1;
         }
         if (gamepad1.dpad_up) {
-            MAX_SPEED = MAX_SPEED + 0.0005;
+            MAX_SPEED = MAX_SPEED + 0.005;
         }
         if (gamepad1.dpad_down){
-            MAX_SPEED = MAX_SPEED - 0.0005;
+            MAX_SPEED = MAX_SPEED - 0.005;
         }
         if (MAX_SPEED > 1){
             MAX_SPEED = 1;
