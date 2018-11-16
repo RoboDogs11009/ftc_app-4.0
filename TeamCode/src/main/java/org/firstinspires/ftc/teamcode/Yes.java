@@ -50,7 +50,7 @@ public class Yes extends LinearOpMode {
     private DcMotor Rf;
     private DcMotor Rb;
     private DcMotor Li;
-   // private Servo S;
+    private Servo S;
 
 
     //VU mark
@@ -99,7 +99,7 @@ public class Yes extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    ModernRoboticsI2cRangeSensor rangeSensor;
+   // ModernRoboticsI2cRangeSensor rangeSensor;
 
 
 
@@ -682,66 +682,11 @@ public class Yes extends LinearOpMode {
         }
     }
 
-    public void rangeReverse(double drive, int range) {
-
-        Lf.setPower(-drive);
-        Lb.setPower(-drive);
-        Rf.setPower(-drive);
-        Rb.setPower(-drive);
-
-
-        runtime.reset();
-
-        while (opModeIsActive() && (rangeSensor.rawUltrasonic() >= range)) {
-
-            telemetry.addData("Driving Back", 0);
-            // send the info back to driver station using telemetry function.
-
-            telemetry.addData("RunTime", runtime.seconds());
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.addData("Range ",rangeSensor.rawUltrasonic() );
-            telemetry.update();
-
-
-        }
-        Lf.setPower(0);
-        Lb.setPower(0);
-        Rf.setPower(0);
-        Rb.setPower(0);
-    } //End Drive
-
-    public void rangeForward(double drive, int range) {
-
-        Lf.setPower(drive);
-        Lb.setPower(drive);
-        Rf.setPower(drive);
-        Rb.setPower(drive);
-
-
-        runtime.reset();
-
-        while (opModeIsActive() && (rangeSensor.rawUltrasonic() <= range)) {
-
-            telemetry.addData("Driving Forward", 0);
-            // send the info back to driver station using telemetry function.
-
-            telemetry.addData("RunTime", runtime.seconds());
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.addData("Range ",rangeSensor.rawUltrasonic() );
-            telemetry.update();
-
-
-        }
-        Lf.setPower(0);
-        Lb.setPower(0);
-        Rf.setPower(0);
-        Rb.setPower(0);
-    } //End Drive
 
     public void servo (double position, double timer)
     {
-        // S.setPosition(0.5);
-       // S.setPosition(position);
+         S.setPosition(0.5);
+         S.setPosition(position);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < timer)) {
 
@@ -819,7 +764,7 @@ public class Yes extends LinearOpMode {
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range");
+       // rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range");
 
 
         // get a reference to the color sensor.
@@ -842,7 +787,7 @@ public class Yes extends LinearOpMode {
 
             lift(0.75, 3);
 
-            //servo(0.5,1);
+            servo(0.5,1);
 
             encoder(12.5, 12.5, 3);
 
@@ -854,11 +799,11 @@ public class Yes extends LinearOpMode {
 
             encoder(48, 48, 5 );
 
-           //servo(0.0, 1);
+           servo(0.0, 1);
 
             waiting(3);
 
-            //servo(0.5, 1);
+            servo(0.5, 1);
 
             encoder(-72, -72, 5);
 
