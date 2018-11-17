@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -53,6 +54,8 @@ public class Yes extends LinearOpMode {
     private Servo S;
 
 
+
+
     //VU mark
     public static final String TAG = "Vuforia VuMark Sample";
 
@@ -82,7 +85,6 @@ public class Yes extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-
 
 
    // DistanceSensor sensorDistance;
@@ -506,6 +508,33 @@ public class Yes extends LinearOpMode {
 
         }
     }
+
+    public void strafeLeft (double power, double timer){
+        Rb.setPower(-power);
+        Rf.setPower(power);
+        Lb.setPower(power);
+        Lf.setPower(-power);
+    }
+
+   public void liftEncoder (int counts, double timer){
+        Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        Li.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        Li.setTargetPosition(counts);
+
+        Li.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        Li.setPower(1);
+
+        while (opModeIsActive() && (runtime.seconds() < timer)){
+            telemetry.addData("Lift Encoder", counts);
+            telemetry.update();
+        }
+        Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Li.setPower(0);
+   }
+
     // ++ means right
     public void strafeEncoder (
             double inches,
@@ -707,11 +736,19 @@ public class Yes extends LinearOpMode {
         Lb = hardwareMap.get(DcMotor.class, "Lb");
         Rf  = hardwareMap.get(DcMotor.class, "Rf");
         Rb = hardwareMap.get(DcMotor.class, "Rb");
+        Li = hardwareMap.get(DcMotor.class, "Li");
+
+        Lf.setDirection(DcMotorSimple.Direction.REVERSE);
+        Lb.setDirection(DcMotorSimple.Direction.REVERSE);
+        Rf.setDirection(DcMotorSimple.Direction.FORWARD);
+        Rb.setDirection(DcMotorSimple.Direction.FORWARD);
+        Li.setDirection(DcMotorSimple.Direction.FORWARD);
 
         Lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //S = hardwareMap.get(Servo.class, "Servo");
 
@@ -785,9 +822,9 @@ public class Yes extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            lift(0.75, 3);
+            liftEncoder(2800, 3);
 
-            servo(0.5,1);
+           servo(-0.5,1);
 
             encoder(12.5, 12.5, 3);
 
@@ -807,7 +844,7 @@ public class Yes extends LinearOpMode {
 
             encoder(-72, -72, 5);
 
-            waiting(4);
+            waiting(27);
         }
 
     } // END RUN OP MODE
