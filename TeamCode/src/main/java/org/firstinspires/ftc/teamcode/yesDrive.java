@@ -23,6 +23,9 @@ public class yesDrive extends OpMode {
     private DcMotor Rb;
     private DcMotor Li;
 
+    double liftPower=0;
+    boolean holdLift = false;
+
 //hi alan is cool
 
 
@@ -94,18 +97,29 @@ public class yesDrive extends OpMode {
         double Strafe = -gamepad1.left_stick_x;
         holonomic(Speed, Turn, Strafe, MAX_SPEED );
 
-        if (gamepad1.left_bumper){
+        if (gamepad1.left_bumper && holdLift == false){
             Li.setPower(-1);
         }
-        else {
+        else if (gamepad1.left_bumper == false && holdLift== false){
             Li.setPower(0);
         }
 
-        if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper && holdLift == false) {
             Li.setPower(1);
         }
-        else{
+        else if(gamepad1.right_bumper == false && holdLift == false){
             Li.setPower(0);
+        }
+
+        if (gamepad1.a)
+        {
+            liftPower = .5;
+            holdLift = true;
+
+        }
+
+        if (gamepad1.b){
+           holdLift = false;
         }
 
         if (gamepad1.x){
@@ -143,6 +157,7 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void stop() {
+        Li.setPower(liftPower);
     }
 
 

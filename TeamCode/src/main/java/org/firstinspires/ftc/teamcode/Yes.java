@@ -309,8 +309,8 @@ public class Yes extends LinearOpMode {
 
 
 
-            Lf.setPower(Range.clip(leftFront,-.2,.2));
-            Lb.setPower(Range.clip(leftBack,-.2,.2));
+            Lf.setPower(Range.clip(leftFront,-.3,.3));
+            Lb.setPower(Range.clip(leftBack,-.2,.3));
             Rf.setPower(Range.clip(rightFront,-.2,.2));
             Rb.setPower(Range.clip(rightBack,-.2,.2));
 
@@ -337,6 +337,30 @@ public class Yes extends LinearOpMode {
         Rb.setPower(0);
 
     }  //END GYRO
+
+    public void gyroInit(){
+        //GYRO
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+
+        // Start the logging of measured acceleration
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+    }
 
     public void encoderDrive (double leftDistance, double rightDistance, double timeOut){
 
@@ -396,9 +420,9 @@ public class Yes extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = Lf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newLeftFrontTarget = Lf.getCurrentPosition() + (int)(-leftInches * COUNTS_PER_INCH);
             newLeftBackTarget = Lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = Rf.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newRightFrontTarget = Rf.getCurrentPosition() + (int)(-rightInches * COUNTS_PER_INCH);
             newRightBackTarget = Rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             Lf.setTargetPosition(newLeftFrontTarget);
             Lb.setTargetPosition(newLeftBackTarget);
@@ -514,6 +538,12 @@ public class Yes extends LinearOpMode {
         Rf.setPower(power);
         Lb.setPower(power);
         Lf.setPower(-power);
+
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < timer)) {
+            telemetry.addData("Path", "Strafing Left: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
     }
 
    public void liftEncoder (int counts, double timer){
@@ -737,6 +767,7 @@ public class Yes extends LinearOpMode {
         Rf  = hardwareMap.get(DcMotor.class, "Rf");
         Rb = hardwareMap.get(DcMotor.class, "Rb");
         Li = hardwareMap.get(DcMotor.class, "Li");
+        S = hardwareMap.get(Servo.class, "S");
 
         Lf.setDirection(DcMotorSimple.Direction.REVERSE);
         Lb.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -779,39 +810,6 @@ public class Yes extends LinearOpMode {
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
 
-        //GYRO
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-
-        // Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-       // rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range");
-
-
-        // get a reference to the color sensor.
-
-
-        // get a reference to the distance sensor that shares the same name.
-
-
-        // wait for the start button to be pressed.
-
 
         waitForStart();
 
@@ -822,30 +820,40 @@ public class Yes extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            liftEncoder(2800, 3);
+            liftEncoder(-2800, 3);
 
-           servo(-0.5,1);
+            strafeLeft(0.2, 0.1);
 
-            encoder(12.5, 12.5, 3);
+            encoder(-40, -40, 3);
 
-            gyro(-82, 3);
+         /*  servo(1,1);
 
-            encoder(13, 13, 4);
+            encoder(-12.5, -12.5, 3);
 
-            gyro(-32, 3);
+            gyro(180, 1);
 
-            encoder(48, 48, 5 );
+            gyro(82, 2);
+
+            encoder(-13, -13, 4);
+
+            gyro(32, 3);
+
+            encoder(-48, -48, 4 );
+
+            gyro(-90, 1);
 
            servo(0.0, 1);
 
-            waiting(3);
+            servo(1, 1);
 
-            servo(0.5, 1);
+            strafeLeft(-0.1, 1);
 
-            encoder(-72, -72, 5);
+            gyro(90, 1);
 
-            waiting(27);
-        }
+            encoder(-70, -70, 3); */
+
+            waiting(23.9);
+                    }
 
     } // END RUN OP MODE
 } // END CLASS
