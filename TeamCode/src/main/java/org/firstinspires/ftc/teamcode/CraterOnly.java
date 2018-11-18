@@ -804,13 +804,13 @@ public class CraterOnly extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            liftEncoder(-2800, 3);
+            liftEncoder(-2800, 4);
 
-            strafeLeft(0.2, 0.1);
+            strafeLeft(0.2, 0.2);
 
             encoder(-40, -40, 3);
 
-            waiting(23.9);
+            waiting(22.8);
                     }
 
     } // END RUN OP MODE
