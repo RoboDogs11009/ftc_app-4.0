@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -53,8 +54,7 @@ public class Yes extends LinearOpMode {
     private DcMotor Li;
     private Servo S;
 
-
-
+    GoldAlignDetector detector = new GoldAlignDetector();
 
     //VU mark
     public static final String TAG = "Vuforia VuMark Sample";
@@ -74,6 +74,7 @@ public class Yes extends LinearOpMode {
    // double colorRed;
     //double colorBlue;
     double drivePower = .7;
+    double mineralPosition = 2;
 
 
 
@@ -758,6 +759,50 @@ public class Yes extends LinearOpMode {
         }
     }
 
+    public void detectMineral(double timer, double gyroLimit, double turnPower){
+     angles = imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX, AngleUnit.DEGREES);
+     AngleUnit angleUnit = angles.angleUnit;
+     double angle = angles.firstAngle;
+     double gyroAngle = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
+
+     runtime.reset();
+     while (opModeIsActive() && runtime.seconds() < timer && gyroAngle <= gyroLimit && detector.getAligned() == false) {
+
+         Lf.setPower(-turnPower);
+         Lb.setPower(-turnPower);
+         Rf.setPower(turnPower);
+         Rb.setPower(turnPower);
+
+         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+         angleUnit = angles.angleUnit;
+         angle = angles.firstAngle;
+         gyroAngle = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
+
+         telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+         telemetry.addData("IsAligned", detector.getAligned());
+         telemetry.addData("X Pos", detector.getXPosition());
+         telemetry.addData("Gyro Limit", gyroLimit);
+         telemetry.addData("Robot Angle", gyroAngle);
+         telemetry.addData("Power", turnPower);
+         telemetry.update();
+     }
+
+        Lf.setPower(0);
+        Lb.setPower(0);
+        Rf.setPower(0);
+        Rb.setPower(0);
+
+        if (gyroAngle <= -30) {
+            mineralPosition = 0;
+        }
+        if (gyroAngle <= 29 || gyroAngle >= -29){
+            mineralPosition = 1;
+        }
+        if (gyroAngle >= 30){
+            mineralPosition = 2;
+        }
+    }
+
     //End Drive
     @Override
     public void runOpMode() throws InterruptedException{
@@ -820,7 +865,7 @@ public class Yes extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            liftEncoder(-2800, 4);
+            /*liftEncoder(-2800, 4);
 
             strafeLeft(0.2, 0.2);
 
@@ -848,7 +893,9 @@ public class Yes extends LinearOpMode {
             encoder(70, 70, 3);
 
             waiting(1.8);
-                    }
+            */
+            
+       }
 
     } // END RUN OP MODE
 } // END CLASS
