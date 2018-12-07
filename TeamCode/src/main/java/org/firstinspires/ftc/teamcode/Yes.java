@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.disnodeteam.dogecv.CameraViewDisplay;
+import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -109,8 +111,6 @@ public class Yes extends LinearOpMode {
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
-
-
 
     public void lift (double drive, double timer) {
         Li.setPower(drive);
@@ -221,12 +221,6 @@ public class Yes extends LinearOpMode {
 
         }
     } //End Wait
-
-
-
-
-
-
 
     public void gyro(double degree, double timer)
     {
@@ -724,9 +718,6 @@ public class Yes extends LinearOpMode {
         }
     }
 
-
-
-
     public void pause ()
     {
 
@@ -741,7 +732,6 @@ public class Yes extends LinearOpMode {
             telemetry.update();
         }
     }
-
 
     public void servo (double position, double timer)
     {
@@ -801,6 +791,31 @@ public class Yes extends LinearOpMode {
         if (gyroAngle >= 30){
             mineralPosition = 2;
         }
+    }
+
+    public void detectorInit() {
+        telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
+
+        // Set up detector
+        detector = new GoldAlignDetector(); // Create detector
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
+        detector.useDefaults(); // Set detector to use default settings
+
+        // Optional tuning
+        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        detector.downscale = 0.4; // How much to downscale the input frames
+
+        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
+        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
+        detector.maxAreaScorer.weight = 0.005; //
+
+        detector.ratioScorer.weight = 5; //
+        detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
+
+        detector.enable(); // Start the detector!
+
+
     }
 
     //End Drive
@@ -865,36 +880,51 @@ public class Yes extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            /*liftEncoder(-2800, 4);
+            liftEncoder(-2800, 2);
 
             strafeLeft(0.2, 0.2);
 
-            encoder(-12.5, -12.5, 3);
+            encoder(12.5, 12.5, 2);
+
+            detectorInit();
+            detectMineral(10, 45, 0.5);
+
+            if (mineralPosition == 0){
+                gyro(-90, 1);
+                encoder(2, 2, 0.5);
+                encoder(-2, -2, 0.5);
+            }
+            if (mineralPosition == 1){
+                gyro(-45, 1);
+                encoder(2, 2, 0.5);
+                encoder(-2, -2, 0.5);
+            }
+            if (mineralPosition == 2){
+                encoder(2, 2, 0.5);
+                encoder(-2, -2, 0.5);
+                waiting(1);
+            }
 
             gyroInit();
-            gyro(82, 3);
+            gyro(82, 2);
 
-            encoder(-13, -13, 3);
+            encoder(-13, -13, 2);
 
-            gyro(32, 3);
+            gyro(32, 1);
 
-            encoder(-48, -48, 4 );
+            encoder(-48, -48, 3 );
 
-            gyro(90, 2);
+            gyro(90, 1);
 
-           servo(0.0, 0.25);
+           servo(0.0, 0.2);
 
-            servo(1, 0.25);
+            servo(1, 0.2);
 
-            strafeLeft(-0.1, 0.5);
+            strafeLeft(-0.1, 0.2);
 
             gyro(90, 2);
 
             encoder(70, 70, 3);
-
-            waiting(1.8);
-            */
-            
        }
 
     } // END RUN OP MODE
