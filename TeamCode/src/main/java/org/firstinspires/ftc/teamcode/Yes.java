@@ -925,6 +925,7 @@ public class Yes extends LinearOpMode {
             gyro(90, 2);
 
             encoder(70, 70, 3);
+            
        }
 
     } // END RUN OP MODE
