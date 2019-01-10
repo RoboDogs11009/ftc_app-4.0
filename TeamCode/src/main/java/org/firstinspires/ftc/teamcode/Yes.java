@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.disnodeteam.dogecv.CameraViewDisplay;
+import com.disnodeteam.dogecv.DogeCV;
+import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -53,8 +56,7 @@ public class Yes extends LinearOpMode {
     private DcMotor Li;
     private Servo S;
 
-
-
+    GoldAlignDetector detector = new GoldAlignDetector();
 
     //VU mark
     public static final String TAG = "Vuforia VuMark Sample";
@@ -74,6 +76,7 @@ public class Yes extends LinearOpMode {
    // double colorRed;
     //double colorBlue;
     double drivePower = .7;
+    double mineralPosition = 2;
 
 
 
@@ -108,8 +111,6 @@ public class Yes extends LinearOpMode {
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
-
-
 
     public void lift (double drive, double timer) {
         Li.setPower(drive);
@@ -220,12 +221,6 @@ public class Yes extends LinearOpMode {
 
         }
     } //End Wait
-
-
-
-
-
-
 
     public void gyro(double degree, double timer)
     {
@@ -420,9 +415,9 @@ public class Yes extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = Lf.getCurrentPosition() + (int)(-leftInches * COUNTS_PER_INCH);
+            newLeftFrontTarget = Lf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newLeftBackTarget = Lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = Rf.getCurrentPosition() + (int)(-rightInches * COUNTS_PER_INCH);
+            newRightFrontTarget = Rf.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             newRightBackTarget = Rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             Lf.setTargetPosition(newLeftFrontTarget);
             Lb.setTargetPosition(newLeftBackTarget);
@@ -527,7 +522,7 @@ public class Yes extends LinearOpMode {
             Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         }
@@ -723,9 +718,6 @@ public class Yes extends LinearOpMode {
         }
     }
 
-
-
-
     public void pause ()
     {
 
@@ -741,21 +733,94 @@ public class Yes extends LinearOpMode {
         }
     }
 
-
-    public void servo (double position, double timer)
+    public void servo (double position1, double position2, double timer)
     {
-         S.setPosition(0.5);
-         S.setPosition(position);
+
+         S.setPosition(position1);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < timer)) {
 
-            telemetry.addData("Servo", position);
+            telemetry.addData("Servo", position1);
             // send the info back to driver station using telemetry function.
 
             telemetry.addData("RunTime", runtime.seconds());
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
+
+        S.setPosition(position2);
+    }
+
+    public void detectMineral(double timer, double gyroLimit, double turnPower){
+     angles = imu.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX, AngleUnit.DEGREES);
+     AngleUnit angleUnit = angles.angleUnit;
+     double angle = angles.firstAngle;
+     double gyroAngle = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
+
+     detector.enable();
+     sleep(2000);
+
+     runtime.reset();
+     while (opModeIsActive() && runtime.seconds() < timer && gyroAngle <= gyroLimit && detector.getAligned() == false) {
+
+         Lf.setPower(-turnPower);
+         Lb.setPower(-turnPower);
+         Rf.setPower(turnPower);
+         Rb.setPower(turnPower);
+
+         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+         angleUnit = angles.angleUnit;
+         angle = angles.firstAngle;
+         gyroAngle = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
+
+         telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+         telemetry.addData("IsAligned", detector.getAligned());
+         telemetry.addData("X Pos", detector.getXPosition());
+         telemetry.addData("Gyro Limit", gyroLimit);
+         telemetry.addData("Robot Angle", gyroAngle);
+         telemetry.addData("Power", turnPower);
+         telemetry.update();
+     }
+
+        Lf.setPower(0);
+        Lb.setPower(0);
+        Rf.setPower(0);
+        Rb.setPower(0);
+
+        if (gyroAngle <= -30) {
+            mineralPosition = 0;
+        }
+        if (gyroAngle <= 29 || gyroAngle >= -29){
+            mineralPosition = 1;
+        }
+        if (gyroAngle >= 30){
+            mineralPosition = 2;
+        }
+    }
+
+    public void detectorInit() {
+        telemetry.addData("Status", "DogeCV 2018.0 - Gold Align Example");
+
+        // Set up detector
+        detector = new GoldAlignDetector(); // Create detector
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
+        detector.useDefaults(); // Set detector to use default settings
+
+        // Optional tuning
+        detector.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        detector.downscale = 0.4; // How much to downscale the input frames
+
+        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
+        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
+        detector.maxAreaScorer.weight = 0.005; //
+
+        detector.ratioScorer.weight = 5; //
+        detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
+
+
+
+
     }
 
     //End Drive
@@ -820,35 +885,57 @@ public class Yes extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            liftEncoder(-2800, 4);
+            //liftEncoder(-2800, 2);
 
-            strafeLeft(0.2, 0.2);
+            //strafeLeft(0.2, 0.2);
 
-            encoder(-12.5, -12.5, 3);
+            //encoder(12.5, 12.5, 2);
 
             gyroInit();
-            gyro(82, 3);
 
-            encoder(-13, -13, 3);
+            gyro(-50, 2);
 
-            gyro(32, 3);
+            detectorInit();
+            detectMineral(10, 50, 0.15);
 
-            encoder(-48, -48, 4 );
+            if (mineralPosition == 0){
+                gyro(-45, 1);
+                encoder(45, 45, 4);
 
+            }
+            if (mineralPosition == 1){
+                gyro(0, 1);
+                encoder(45, 45, 4);
+
+            }
+            if (mineralPosition == 2){
+               gyro(45, 1);
+                encoder(45, 45, 4);
+
+            }
+
+
+
+            /*gyro(82, 2);
+
+            encoder(13, 13, 2);
+*/
             gyro(90, 2);
+/*
+            encoder(48, 48, 3 );
 
-           servo(0.0, 0.25);
-
-            servo(1, 0.25);
-
-            strafeLeft(-0.1, 0.5);
+            gyro(90, 1);
+*/
+           servo(0, -1, 1);
+/*
+            strafeLeft(-0.1, 0.2);
 
             gyro(90, 2);
 
             encoder(70, 70, 3);
-
-            waiting(1.8);
-                    }
+*/
+            waiting(30);
+       }
 
     } // END RUN OP MODE
 } // END CLASS
