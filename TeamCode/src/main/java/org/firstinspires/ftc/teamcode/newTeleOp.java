@@ -7,24 +7,24 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+
 import static com.qualcomm.robotcore.util.Range.scale;
 import static java.lang.Math.abs;
 
 
 @TeleOp(name="yesDrive", group="Linear Opmode")
-//@Disabled
-public class yesDrive extends OpMode {
+@Disabled
+public class newTeleOp extends OpMode {
 
     /* Declare OpMode members. */
+    Hardware robot       = new Hardware();
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor Lf = null;
-    private DcMotor Lb = null;
-    private DcMotor Rf = null;
-    private DcMotor Rb = null;
-   // private DcMotor Li = null;
-    private DcMotor In = null;
-    private DcMotor Ra = null;
-    private DcMotor La = null;
+    private DcMotor Lf;
+    private DcMotor Lb;
+    private DcMotor Rf;
+    private DcMotor Rb;
+    private DcMotor Li;
 
     double liftPower=0;
     boolean holdLift = false;
@@ -54,29 +54,21 @@ public class yesDrive extends OpMode {
         Lb = hardwareMap.get(DcMotor.class, "Lb");
         Rf  = hardwareMap.get(DcMotor.class, "Rf");
         Rb = hardwareMap.get(DcMotor.class, "Rb");
-       // Li = hardwareMap.get(DcMotor.class, "Li");
-        In = hardwareMap.get(DcMotor.class, "In");
-        Ra = hardwareMap.get(DcMotor.class, "Ra");
-        La = hardwareMap.get(DcMotor.class, "La");
-
+        Li = hardwareMap.get(DcMotor.class, "Li");
 
         Lf.setDirection(DcMotorSimple.Direction.REVERSE);
         Lb.setDirection(DcMotorSimple.Direction.REVERSE);
         Rf.setDirection(DcMotorSimple.Direction.FORWARD);
         Rb.setDirection(DcMotorSimple.Direction.FORWARD);
-      //Li.setDirection(DcMotorSimple.Direction.FORWARD);
-        In.setDirection(DcMotorSimple.Direction.FORWARD);
-        Ra.setDirection(DcMotorSimple.Direction.FORWARD);
-        La.setDirection(DcMotorSimple.Direction.REVERSE);
+        Li.setDirection(DcMotorSimple.Direction.FORWARD);
 
         Lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        In.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Ra.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        La.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
@@ -107,14 +99,8 @@ public class yesDrive extends OpMode {
         double Turn = gamepad1.right_stick_x;
         double Strafe = -gamepad1.left_stick_x;
         holonomic(Speed, Turn, Strafe, MAX_SPEED );
-        double armPower = gamepad2.left_stick_y;
-        double intakePower = gamepad2.right_stick_y;
 
-        In.setPower(intakePower);
-        La.setPower(armPower);
-        Ra.setPower(armPower);
-
-        /* if (gamepad1.left_bumper && holdLift == false){
+        if (gamepad1.left_bumper && holdLift == false){
             Li.setPower(-1);
         }
         else if (gamepad1.left_bumper == false && holdLift== false){
@@ -137,7 +123,7 @@ public class yesDrive extends OpMode {
 
         if (gamepad1.b){
            holdLift = false;
-        } */
+        }
 
         if (gamepad1.x){
             MAX_SPEED = 0.75;
@@ -174,7 +160,7 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void stop() {
-        //Li.setPower(liftPower);
+        Li.setPower(liftPower);
     }
 
 

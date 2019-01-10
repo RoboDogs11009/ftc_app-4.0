@@ -415,9 +415,9 @@ public class Yes extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = Lf.getCurrentPosition() + (int)(-leftInches * COUNTS_PER_INCH);
+            newLeftFrontTarget = Lf.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newLeftBackTarget = Lb.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = Rf.getCurrentPosition() + (int)(-rightInches * COUNTS_PER_INCH);
+            newRightFrontTarget = Rf.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             newRightBackTarget = Rb.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             Lf.setTargetPosition(newLeftFrontTarget);
             Lb.setTargetPosition(newLeftBackTarget);
@@ -522,7 +522,7 @@ public class Yes extends LinearOpMode {
             Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         }
@@ -733,20 +733,22 @@ public class Yes extends LinearOpMode {
         }
     }
 
-    public void servo (double position, double timer)
+    public void servo (double position1, double position2, double timer)
     {
-         S.setPosition(0.5);
-         S.setPosition(position);
+
+         S.setPosition(position1);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < timer)) {
 
-            telemetry.addData("Servo", position);
+            telemetry.addData("Servo", position1);
             // send the info back to driver station using telemetry function.
 
             telemetry.addData("RunTime", runtime.seconds());
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
+
+        S.setPosition(position2);
     }
 
     public void detectMineral(double timer, double gyroLimit, double turnPower){
@@ -754,6 +756,9 @@ public class Yes extends LinearOpMode {
      AngleUnit angleUnit = angles.angleUnit;
      double angle = angles.firstAngle;
      double gyroAngle = AngleUnit.DEGREES.fromUnit(angleUnit, angle);
+
+     detector.enable();
+     sleep(2000);
 
      runtime.reset();
      while (opModeIsActive() && runtime.seconds() < timer && gyroAngle <= gyroLimit && detector.getAligned() == false) {
@@ -813,7 +818,7 @@ public class Yes extends LinearOpMode {
         detector.ratioScorer.weight = 5; //
         detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
 
-        detector.enable(); // Start the detector!
+
 
 
     }
@@ -880,52 +885,56 @@ public class Yes extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            liftEncoder(-2800, 2);
+            //liftEncoder(-2800, 2);
 
-            strafeLeft(0.2, 0.2);
+            //strafeLeft(0.2, 0.2);
 
-            encoder(12.5, 12.5, 2);
-
-            detectorInit();
-            detectMineral(10, 45, 0.5);
-
-            if (mineralPosition == 0){
-                gyro(-90, 1);
-                encoder(2, 2, 0.5);
-                encoder(-2, -2, 0.5);
-            }
-            if (mineralPosition == 1){
-                gyro(-45, 1);
-                encoder(2, 2, 0.5);
-                encoder(-2, -2, 0.5);
-            }
-            if (mineralPosition == 2){
-                encoder(2, 2, 0.5);
-                encoder(-2, -2, 0.5);
-                waiting(1);
-            }
+            //encoder(12.5, 12.5, 2);
 
             gyroInit();
-            gyro(82, 2);
 
-            encoder(-13, -13, 2);
+            gyro(-50, 2);
 
-            gyro(32, 1);
+            detectorInit();
+            detectMineral(10, 50, 0.15);
 
-            encoder(-48, -48, 3 );
+            if (mineralPosition == 0){
+                gyro(-45, 1);
+                encoder(45, 45, 4);
+
+            }
+            if (mineralPosition == 1){
+                gyro(0, 1);
+                encoder(45, 45, 4);
+
+            }
+            if (mineralPosition == 2){
+               gyro(45, 1);
+                encoder(45, 45, 4);
+
+            }
+
+
+
+            /*gyro(82, 2);
+
+            encoder(13, 13, 2);
+*/
+            gyro(90, 2);
+/*
+            encoder(48, 48, 3 );
 
             gyro(90, 1);
-
-           servo(0.0, 0.2);
-
-            servo(1, 0.2);
-
+*/
+           servo(0, -1, 1);
+/*
             strafeLeft(-0.1, 0.2);
 
             gyro(90, 2);
 
             encoder(70, 70, 3);
-            
+*/
+            waiting(30);
        }
 
     } // END RUN OP MODE
