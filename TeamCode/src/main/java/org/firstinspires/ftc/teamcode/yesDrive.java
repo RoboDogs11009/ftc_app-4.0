@@ -201,5 +201,5 @@ public class yesDrive extends OpMode {
             Rb.setPower(scale((Speed - Turn - Strafe),
                     -Magnitude, +Magnitude, -MAX_SPEED, +MAX_SPEED));
         }
-    }
+    } 
 }
