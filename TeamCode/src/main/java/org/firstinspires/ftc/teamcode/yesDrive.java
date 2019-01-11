@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import static com.qualcomm.robotcore.util.Range.scale;
 import static java.lang.Math.abs;
@@ -26,21 +28,39 @@ public class yesDrive extends OpMode {
     private DcMotor Ra = null;
     private DcMotor La = null;
 
+    private AnalogInput armPot = null;
+
     double liftPower=0;
     boolean holdLift = false;
-
-//hi alan is cool
-
-
-
+    double intakePower = 0;
 
 
     double MAX_SPEED = 1.0;
+    double armVolatge = 0;
 
-    double rollerPower = 0;
+    potentiometer pot = new potentiometer();
 
-    double slowDrive = 0.75;
-    double SDinc = 0.005;
+    double armDegree = 0;
+    double armTarget = 20;
+
+    double armPower;
+    double armExtendPower = 0;
+    int armTargetPosition = 12;
+    int armCurrentPosition = 12;
+
+    double lastError = 0;
+    double currentError = 0;
+    double dError = 0;
+
+    double ierror = 0;
+
+    //PID Constants
+
+    double ARMPID_KP = 0;
+    double ARMPID_KD = 0;
+    double ARMPID_KI = 0;
+
+    double ARMEXTENDPID_KP = 0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -94,6 +114,7 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void start() {
+        armTarget = 20;
     }
 
     /*
@@ -101,15 +122,14 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void loop() {
-
+        armVolatge = armPot.getVoltage();
+        armDegree = pot.degree(armVolatge);
 
       double Speed = -gamepad1.left_stick_y;
         double Turn = gamepad1.right_stick_x;
         double Strafe = -gamepad1.left_stick_x;
         holonomic(Speed, Turn, Strafe, MAX_SPEED );
-        double armPower = gamepad2.left_trigger;
-        armPower = -gamepad2.right_trigger;
-        double intakePower;
+
 
         if (gamepad2.b){
             intakePower = 0.75;
@@ -125,8 +145,22 @@ public class yesDrive extends OpMode {
         }
 
         In.setPower(intakePower);
-        La.setPower(armPower);
-        Ra.setPower(armPower);
+
+        if (gamepad2.right_bumper){
+            armTarget -= 1;
+            if (armTarget <=17){
+                armTarget = 17;
+            }
+        }
+
+        if (gamepad2.left_bumper){
+            armTarget += 1;
+            if (armTarget >=190){
+                armTarget = 190;
+            }
+        }
+
+        arm(armTarget);
 
         /* if (gamepad1.left_bumper && holdLift == false){
             Li.setPower(-1);
@@ -179,7 +213,10 @@ public class yesDrive extends OpMode {
         telemetry.addData("Turn",  "%.2f", Turn);
         telemetry.addData("Strafe", "%.2f", Strafe);
         telemetry.addData("MAX Speed", "%.2f", MAX_SPEED);
-        telemetry.addData("Roller Power",  "%.2f", rollerPower);
+        telemetry.addData("armTarget",  "%.2f", armTarget);
+        telemetry.addData("armDegree",  "%.2f", armDegree);
+        telemetry.addData("Arm Power",  "%.2f", armPower);
+        telemetry.addData("Intake Power",  "%.2f", intakePower);
 
     }
 
@@ -191,8 +228,33 @@ public class yesDrive extends OpMode {
         //Li.setPower(liftPower);
     }
 
+    public void arm(double target){
+        double error = target - armDegree;
+        currentError = error;
 
+        //Calculate derivative
 
+        dError = currentError - lastError;
+
+        //Calculate integral
+
+        if (error > 0){
+            ierror = ierror + 0.1;
+        }
+
+        if (error < 0){
+            ierror = ierror - 0.1;
+        }
+
+        if (error == 0){
+            ierror = 0;
+        }
+
+        armPower = (ARMPID_KP * error) - (dError * ARMPID_KD) + (Range.clip(ierror*ARMPID_KI, -0.6, 0.6));
+        La.setPower(Range.clip(armPower, -1, 1));
+        Ra.setPower(Range.clip(armPower, -1, 1));
+
+    }
 
     public void holonomic(double Speed, double Turn, double Strafe, double MAX_SPEED) {
 
@@ -216,4 +278,4 @@ public class yesDrive extends OpMode {
                     -Magnitude, +Magnitude, -MAX_SPEED, +MAX_SPEED));
         }
     }
-} 
+}

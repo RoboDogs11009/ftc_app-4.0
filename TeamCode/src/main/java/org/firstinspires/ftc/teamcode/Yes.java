@@ -53,7 +53,10 @@ public class Yes extends LinearOpMode {
     private DcMotor Lb;
     private DcMotor Rf;
     private DcMotor Rb;
-    private DcMotor Li;
+    //private DcMotor Li;
+    private DcMotor In;
+    private DcMotor Ra;
+    private DcMotor La;
     private Servo S;
 
     GoldAlignDetector detector = new GoldAlignDetector();
@@ -112,7 +115,7 @@ public class Yes extends LinearOpMode {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 
-    public void lift (double drive, double timer) {
+   /* public void lift (double drive, double timer) {
         Li.setPower(drive);
 
         runtime.reset();
@@ -125,56 +128,7 @@ public class Yes extends LinearOpMode {
         }
         Li.setPower(0);
     }
-
-    public void turnLeft(double drive, double timer) {
-
-        Lf.setPower(-drive);
-        Lb.setPower(-drive);
-        Rf.setPower(drive);
-        Rb.setPower(drive);
-
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < timer)) {
-
-            telemetry.addData("Turning Left", 0);
-            // send the info back to driver station using telemetry function.
-
-            telemetry.addData("RunTime", runtime.seconds());
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-
-
-        }
-        drive(0,.01);
-
-
-
-    } // End Turn Left
-
-    public void turnRight(double drive, double timer) {
-
-        Lf.setPower(drive);
-        Lb.setPower(drive);
-        Rf.setPower(-drive);
-        Rb.setPower(-drive);
-
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < timer)) {
-
-            telemetry.addData("Turning Right", 0);
-            // send the info back to driver station using telemetry function.
-
-            telemetry.addData("RunTime", runtime.seconds());
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-
-
-        }
-
-        drive(0,.01);
-
-    }
-
+   */
     public void drive(double drive, double timer) {
 
         Lf.setPower(drive);
@@ -518,30 +472,17 @@ public class Yes extends LinearOpMode {
             drive(0, .1);
 
             // Turn off RUN_TO_POSITION
-            Lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         }
     }
 
-    public void strafeLeft (double power, double timer){
-        Rb.setPower(-power);
-        Rf.setPower(power);
-        Lb.setPower(power);
-        Lf.setPower(-power);
-
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < timer)) {
-            telemetry.addData("Path", "Strafing Left: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-    }
-
-   public void liftEncoder (int counts, double timer){
+  /* public void liftEncoder (int counts, double timer){
         Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Li.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -559,7 +500,7 @@ public class Yes extends LinearOpMode {
         Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Li.setPower(0);
    }
-
+   */
     // ++ means right
     public void strafeEncoder (
             double inches,
@@ -597,7 +538,7 @@ public class Yes extends LinearOpMode {
         Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         // Ensure that the opmode is still active
@@ -712,24 +653,9 @@ public class Yes extends LinearOpMode {
             Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+           // Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-        }
-    }
-
-    public void pause ()
-    {
-
-        runtime.reset();
-        while (opModeIsActive() && (!gamepad1.a)) {
-
-            telemetry.addData("Pause", 0);
-            // send the info back to driver station using telemetry function.
-
-            telemetry.addData("RunTime", runtime.seconds());
-            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
         }
     }
 
@@ -823,7 +749,7 @@ public class Yes extends LinearOpMode {
 
     }
 
-    //End Drive
+
     @Override
     public void runOpMode() throws InterruptedException{
 
@@ -831,20 +757,30 @@ public class Yes extends LinearOpMode {
         Lb = hardwareMap.get(DcMotor.class, "Lb");
         Rf  = hardwareMap.get(DcMotor.class, "Rf");
         Rb = hardwareMap.get(DcMotor.class, "Rb");
-        Li = hardwareMap.get(DcMotor.class, "Li");
+       // Li = hardwareMap.get(DcMotor.class, "Li");
+        In = hardwareMap.get(DcMotor.class, "In");
+        Ra = hardwareMap.get(DcMotor.class, "Ra");
+        La = hardwareMap.get(DcMotor.class, "La");
         S = hardwareMap.get(Servo.class, "S");
+
 
         Lf.setDirection(DcMotorSimple.Direction.REVERSE);
         Lb.setDirection(DcMotorSimple.Direction.REVERSE);
         Rf.setDirection(DcMotorSimple.Direction.FORWARD);
         Rb.setDirection(DcMotorSimple.Direction.FORWARD);
-        Li.setDirection(DcMotorSimple.Direction.FORWARD);
+       // Li.setDirection(DcMotorSimple.Direction.FORWARD);
+        In.setDirection(DcMotorSimple.Direction.FORWARD);
+        Ra.setDirection(DcMotorSimple.Direction.FORWARD);
+        La.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       // Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        In.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Ra.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        La.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //S = hardwareMap.get(Servo.class, "Servo");
 
