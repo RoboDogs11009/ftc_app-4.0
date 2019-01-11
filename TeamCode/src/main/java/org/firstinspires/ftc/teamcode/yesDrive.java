@@ -107,8 +107,22 @@ public class yesDrive extends OpMode {
         double Turn = gamepad1.right_stick_x;
         double Strafe = -gamepad1.left_stick_x;
         holonomic(Speed, Turn, Strafe, MAX_SPEED );
-        double armPower = gamepad2.left_stick_y;
-        double intakePower = gamepad2.right_stick_y;
+        double armPower = gamepad2.left_trigger;
+        armPower = -gamepad2.right_trigger;
+        double intakePower;
+
+        if (gamepad2.b){
+            intakePower = 0.75;
+        }
+        else{
+            intakePower = 0;
+        }
+        if (gamepad2.y){
+            intakePower = -0.75;
+        }
+        else{
+            intakePower = 0;
+        }
 
         In.setPower(intakePower);
         La.setPower(armPower);
@@ -201,5 +215,5 @@ public class yesDrive extends OpMode {
             Rb.setPower(scale((Speed - Turn - Strafe),
                     -Magnitude, +Magnitude, -MAX_SPEED, +MAX_SPEED));
         }
-    } 
+    }
 }
