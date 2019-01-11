@@ -23,14 +23,14 @@ public class yesDrive extends OpMode {
     private DcMotor Lb = null;
     private DcMotor Rf = null;
     private DcMotor Rb = null;
-   // private DcMotor Li = null;
+    private DcMotor Li = null;
     private DcMotor In = null;
     private DcMotor Ra = null;
     private DcMotor La = null;
 
-    private AnalogInput armPot = null;
+    private AnalogInput armPot;
 
-    double liftPower=0;
+    double liftPower = 0;
     boolean holdLift = false;
     double intakePower = 0;
 
@@ -74,7 +74,7 @@ public class yesDrive extends OpMode {
         Lb = hardwareMap.get(DcMotor.class, "Lb");
         Rf  = hardwareMap.get(DcMotor.class, "Rf");
         Rb = hardwareMap.get(DcMotor.class, "Rb");
-       // Li = hardwareMap.get(DcMotor.class, "Li");
+        Li = hardwareMap.get(DcMotor.class, "Li");
         In = hardwareMap.get(DcMotor.class, "In");
         Ra = hardwareMap.get(DcMotor.class, "Ra");
         La = hardwareMap.get(DcMotor.class, "La");
@@ -84,7 +84,7 @@ public class yesDrive extends OpMode {
         Lb.setDirection(DcMotorSimple.Direction.REVERSE);
         Rf.setDirection(DcMotorSimple.Direction.FORWARD);
         Rb.setDirection(DcMotorSimple.Direction.FORWARD);
-      //Li.setDirection(DcMotorSimple.Direction.FORWARD);
+        Li.setDirection(DcMotorSimple.Direction.FORWARD);
         In.setDirection(DcMotorSimple.Direction.FORWARD);
         Ra.setDirection(DcMotorSimple.Direction.FORWARD);
         La.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -93,7 +93,7 @@ public class yesDrive extends OpMode {
         Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         In.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Ra.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         La.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -114,7 +114,7 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void start() {
-        armTarget = 20;
+       // armTarget = 20;
     }
 
     /*
@@ -122,22 +122,26 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void loop() {
-        armVolatge = armPot.getVoltage();
-        armDegree = pot.degree(armVolatge);
+      //  armVolatge = armPot.getVoltage();
+      //  armDegree = pot.degree(armVolatge);
 
       double Speed = -gamepad1.left_stick_y;
         double Turn = gamepad1.right_stick_x;
         double Strafe = -gamepad1.left_stick_x;
         holonomic(Speed, Turn, Strafe, MAX_SPEED );
 
+        armPower = gamepad2.left_trigger;
+        if (gamepad2.left_trigger == 0){
+            armPower = -gamepad2.right_trigger;
+        }
 
-        if (gamepad2.b){
+        La.setPower(armPower);
+        Ra.setPower(armPower);
+
+        if (gamepad2.x){
             intakePower = 0.75;
         }
-        else{
-            intakePower = 0;
-        }
-        if (gamepad2.y){
+        else if (gamepad2.y){
             intakePower = -0.75;
         }
         else{
@@ -146,7 +150,19 @@ public class yesDrive extends OpMode {
 
         In.setPower(intakePower);
 
-        if (gamepad2.right_bumper){
+        if (gamepad2.a){
+            liftPower = 1;
+        }
+        else if(gamepad2.b){
+            liftPower = -1;
+        }
+        else{
+            liftPower = 0;
+        }
+
+        Li.setPower(liftPower);
+
+       /* if (gamepad2.right_bumper){
             armTarget -= 1;
             if (armTarget <=17){
                 armTarget = 17;
@@ -159,8 +175,8 @@ public class yesDrive extends OpMode {
                 armTarget = 190;
             }
         }
-
-        arm(armTarget);
+        */
+        //arm(armTarget);
 
         /* if (gamepad1.left_bumper && holdLift == false){
             Li.setPower(-1);
@@ -213,8 +229,8 @@ public class yesDrive extends OpMode {
         telemetry.addData("Turn",  "%.2f", Turn);
         telemetry.addData("Strafe", "%.2f", Strafe);
         telemetry.addData("MAX Speed", "%.2f", MAX_SPEED);
-        telemetry.addData("armTarget",  "%.2f", armTarget);
-        telemetry.addData("armDegree",  "%.2f", armDegree);
+       // telemetry.addData("armTarget",  "%.2f", armTarget);
+       // telemetry.addData("armDegree",  "%.2f", armDegree);
         telemetry.addData("Arm Power",  "%.2f", armPower);
         telemetry.addData("Intake Power",  "%.2f", intakePower);
 
@@ -228,7 +244,7 @@ public class yesDrive extends OpMode {
         //Li.setPower(liftPower);
     }
 
-    public void arm(double target){
+  /*  public void arm(double target){
         double error = target - armDegree;
         currentError = error;
 
@@ -254,8 +270,10 @@ public class yesDrive extends OpMode {
         La.setPower(Range.clip(armPower, -1, 1));
         Ra.setPower(Range.clip(armPower, -1, 1));
 
-    }
+        currentError = lastError;
 
+    }
+    */
     public void holonomic(double Speed, double Turn, double Strafe, double MAX_SPEED) {
 
 //      Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
