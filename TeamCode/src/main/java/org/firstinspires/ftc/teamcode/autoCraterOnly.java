@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.View;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
@@ -9,44 +8,29 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.sun.tools.javac.comp.Lower;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-
-import java.util.Locale;
 
 //john paul is not gay
 //josh is gay
-@Autonomous(name = "Yes", group = "Sensor")
+@Autonomous(name = "autoCraterOnly", group = "Sensor")
 //@Disabled                       // Comment this out to add to the opmode list
-public class Yes extends LinearOpMode {
+public class autoCraterOnly extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
     private DcMotor Lf;
@@ -713,10 +697,10 @@ public class Yes extends LinearOpMode {
                 }
 
 
-                Lf.setPower(Math.abs( Range.clip(leftFrontPower, -.15, .15)));
-                Lb.setPower(Math.abs( Range.clip(leftBackPower, -.15, .15)));
-                Rf.setPower(Math.abs( Range.clip(rightFrontPower, -.15, .15)));
-                Rb.setPower(Math.abs( Range.clip(rightBackPower, -.15, .15)));
+                Lf.setPower(Math.abs( Range.clip(leftFrontPower, -.3, .3)));
+                Lb.setPower(Math.abs( Range.clip(leftBackPower, -.3, .3)));
+                Rf.setPower(Math.abs( Range.clip(rightFrontPower, -.3, .3)));
+                Rb.setPower(Math.abs( Range.clip(rightBackPower, -.3, .3)));
 
                 // Display it for the driver.
                 telemetry.addData("ENCODERING Strafe Style!!!!!!!!!", 0);
@@ -904,55 +888,7 @@ public class Yes extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            liftEncoder(-5040, 6000, 6);
-
-         //   strafeLeft(0.2, 0.2);
-
-            encoder(12.5, 12.5, 6);
-
-            gyroInit();
-
-            gyro(90, 3);
-
-            gyro(90, 3);
-
-            rope(6000, 3);
-
-            arm(10000, 5);
-
-           /* gyro(-45, 2);
-
-            detectorInit();
-            detectMineral(10, 90, 0.15);
-
-            if (mineralPosition == 0){
-                gyro(-90, 1);
-                encoder(45, 45, 4);
-                encoder(-45, -45, 4);
-                gyro(45, 1);
-
-            }
-            if (mineralPosition == 1){
-                gyro(-45, 1);
-                encoder(45, 45, 4);
-                encoder(45, 45, 4);
-
-            }
-            if (mineralPosition == 2){
-                encoder(45, 45, 4);
-                encoder(-45, -45, 4);
-                gyro(-45, 1);
-
-            }
-           
-            gyro(99, 4);
-
-            encoder(13, 13, 3);
-
-            gyro(32.5, 3);
-
-            encoder(-48, -48, 4 );
-            */
+            encoder(30, 30, 4);
 
             waiting(30);
        }

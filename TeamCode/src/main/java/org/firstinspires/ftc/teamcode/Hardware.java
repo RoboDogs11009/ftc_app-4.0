@@ -55,12 +55,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Hardware
 {
     /* Public OpMode members. */
-    public DcMotor Lf = null;
-    public DcMotor Lb = null;
-    public DcMotor Rf = null;
-    public DcMotor Rb = null;
-    public DcMotor Li = null;
-    public Servo S = null;
+    public DcMotor Lf;
+    public DcMotor Lb;
+    public DcMotor Rf;
+    public DcMotor Rb;
+    public DcMotor Li;
+    public Servo S;
 
     GoldAlignDetector detector = new GoldAlignDetector();
 
