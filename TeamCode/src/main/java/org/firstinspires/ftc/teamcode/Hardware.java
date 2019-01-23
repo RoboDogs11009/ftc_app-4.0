@@ -60,6 +60,8 @@ public class Hardware
     public DcMotor Rf;
     public DcMotor Rb;
     public DcMotor Li;
+    public DcMotor Ra;
+    public DcMotor La;
     public Servo S;
 
     GoldAlignDetector detector = new GoldAlignDetector();
@@ -87,18 +89,25 @@ public class Hardware
         Rf  = hwMap.get(DcMotor.class, "Rf");
         Rb = hwMap.get(DcMotor.class, "Rb");
         Li = hwMap.get(DcMotor.class, "Li");
+        Ra = hwMap.get(DcMotor.class,"Ra");
+        La = hwMap.get(DcMotor.class,"La");
+        S = hwMap.get(Servo.class, "S");
 
-        Lf.setDirection(DcMotorSimple.Direction.REVERSE);
-        Lb.setDirection(DcMotorSimple.Direction.REVERSE);
-        Rf.setDirection(DcMotorSimple.Direction.FORWARD);
-        Rb.setDirection(DcMotorSimple.Direction.FORWARD);
-        Li.setDirection(DcMotorSimple.Direction.FORWARD);
+        Lf.setDirection(DcMotor.Direction.REVERSE);
+        Lb.setDirection(DcMotor.Direction.REVERSE);
+        Rf.setDirection(DcMotor.Direction.FORWARD);
+        Rb.setDirection(DcMotor.Direction.FORWARD);
+        Li.setDirection(DcMotor.Direction.FORWARD);
+        Ra.setDirection(DcMotor.Direction.REVERSE);
+        La.setDirection(DcMotor.Direction.FORWARD);
 
         Lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Li.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Ra.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        La.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
  }
 
