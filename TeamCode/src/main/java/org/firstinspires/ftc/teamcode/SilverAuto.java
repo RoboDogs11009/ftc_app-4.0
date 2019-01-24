@@ -1,19 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.app.Activity;
-import android.view.View;
-
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -29,9 +23,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 //john paul is not fun
 //josh is fun
-@Autonomous(name = "Sphere", group = "Sensor")
-@Disabled// Comment this out to add to the opmode list
-public class SphereAuto extends LinearOpMode {
+@Autonomous(name = "SilverAuto", group = "Sensor")
+                    // Comment this out to add to the opmode list
+public class SilverAuto extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
     private DcMotor Lf;
@@ -860,36 +854,42 @@ public class SphereAuto extends LinearOpMode {
 
             if (mineralPosition == 0){
                 gyro(-30, 1);
-                encoderDrive(44, 44, .5, 3 );
+                encoderDrive(24, 24, .4, 3 );
+                encoderDrive(-8,-8,.4,2);
                 gyro(-90, 2);
-                encoderDrive(-22,-22, .4, 4);
-                servo(0,1,2);
-                encoderDrive(-18,-18, .4, 4);
-                gyro(-47,2);
-                encoderDrive(-48,-60, .5, 4);
+                encoderDrive(-48,-48, .4, 4);
+                gyro(-40,2);
+                encoderDrive(-46,-46, 1, 4);
+                gyro(0,1);
+                servo(0,1,1.5);
 
 
             }
             if (mineralPosition == 1){
                 gyro(0, 1);
-                encoderDrive(44, 44, .5, 3 ); //CHANGE
+                encoderDrive(24, 24, .4, 3 );
+                encoderDrive(-8,-8,.4,2);
                 gyro(-90, 2);
-               // encoderDrive(-22,-22, .4, 4); //CHANGE??????????
-                servo(0,1,2);
-                encoderDrive(-18,-18, .4, 4);//CHANGE
-                gyro(-47,2);
-                encoderDrive(-48,-55, .5, 4);
+                encoderDrive(-36,-36, .4, 4);
+                gyro(-50,2);
+                encoderDrive(-40,-40, 1, 4);
+                gyro(45,1);
+                servo(0,1,1.5);
 
             }
+
             if (mineralPosition == 2){
-               //gyro(30, 1);
-                encoderDrive(44, 44, .5, 3 );
-                gyro(-90, 2);
-                encoderDrive(16,16, .4, 4);
+                //gyro(30, 1);
+                encoderDrive(24, 24, .4, 3 );
+               gyro(-90, 2);
+                encoderDrive(-24,-24, .4, 4);
+                gyro(-45,2);
+                encoderDrive(-60,-60, 1, 4);
                 servo(0,1,1.5);
-                encoderDrive(-18,-18, .4, 4);
-                gyro(-47,2);
-                encoderDrive(-48,-60, .5, 4);
+               //encoderDrive(-18,-18, .4, 4);
+               // gyro(-47,2);
+               // encoderDrive(-48,-60, .5, 4);
+
 
             }
 
