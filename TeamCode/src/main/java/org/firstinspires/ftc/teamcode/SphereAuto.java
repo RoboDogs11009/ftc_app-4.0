@@ -864,9 +864,9 @@ public class SphereAuto extends LinearOpMode {
                 gyro(-90, 2);
                 encoderDrive(-22,-22, .4, 4);
                 servo(0,1,2);
-                encoderDrive(-20,-20, .4, 4);
+                encoderDrive(-18,-18, .4, 4);
                 gyro(-47,2);
-                encoderDrive(-60,-60, .5, 4);
+                encoderDrive(-48,-60, .5, 4);
 
 
             }
@@ -874,22 +874,22 @@ public class SphereAuto extends LinearOpMode {
                 gyro(0, 1);
                 encoderDrive(44, 44, .5, 3 ); //CHANGE
                 gyro(-90, 2);
-                encoderDrive(-22,-22, .4, 4); //CHANGE??????????
+               // encoderDrive(-22,-22, .4, 4); //CHANGE??????????
                 servo(0,1,2);
-                encoderDrive(-20,-20, .4, 4);//CHANGE
+                encoderDrive(-18,-18, .4, 4);//CHANGE
                 gyro(-47,2);
-                encoderDrive(-60,-60, .5, 4);
+                encoderDrive(-48,-55, .5, 4);
 
             }
             if (mineralPosition == 2){
-               gyro(30, 1);
+               //gyro(30, 1);
                 encoderDrive(44, 44, .5, 3 );
                 gyro(-90, 2);
-                encoderDrive(-22,-22, .4, 4);
-                servo(0,1,2);
-                encoderDrive(-20,-20, .4, 4);
+                encoderDrive(16,16, .4, 4);
+                servo(0,1,1.5);
+                encoderDrive(-18,-18, .4, 4);
                 gyro(-47,2);
-                encoderDrive(-60,-60, .5, 4);
+                encoderDrive(-48,-60, .5, 4);
 
             }
 
