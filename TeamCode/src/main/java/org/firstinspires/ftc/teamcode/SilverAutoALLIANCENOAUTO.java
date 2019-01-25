@@ -844,7 +844,7 @@ public class SilverAutoALLIANCENOAUTO extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-             liftEncoder(12000, 5);
+            // liftEncoder(12000, 5);
 
             drive(-.2,1.5);
             gyroInit();
@@ -861,7 +861,7 @@ public class SilverAutoALLIANCENOAUTO extends LinearOpMode {
                 encoderDrive(-8,-8,.5,2);
                 gyro(-90, 2);
                 encoderDrive(-48,-48, .5, 4);
-                gyro(-40,2);
+                gyro(-42,2);
                 encoderDrive(-46,-46, 1, 4);
                 gyro(0,1);
                 servo(0,1,1.5);
@@ -873,7 +873,7 @@ public class SilverAutoALLIANCENOAUTO extends LinearOpMode {
                 encoderDrive(-8,-8,.6,2);
                 gyro(-90, 2);
                 encoderDrive(-36,-36, .6, 3);
-                gyro(-50,2);
+                gyro(-52,2);
                 encoderDrive(-40,-40, 1, 3);
                 gyro(70,2);
                 encoderDrive(-24,-24,1,1);
@@ -888,7 +888,7 @@ public class SilverAutoALLIANCENOAUTO extends LinearOpMode {
                 encoderDrive(24, 24, .4, 3 );
                gyro(-90, 2);
                 encoderDrive(-24,-24, .4, 4);
-                gyro(-45,2);
+                gyro(-47,2);
                 encoderDrive(-60,-60, 1, 4);
                 servo(0,1,1.5);
                 gyro(-120,1);

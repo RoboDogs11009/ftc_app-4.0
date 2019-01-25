@@ -858,7 +858,7 @@ public class SilverAuto extends LinearOpMode {
                 encoderDrive(-8,-8,.4,2);
                 gyro(-90, 2);
                 encoderDrive(-48,-48, .4, 4);
-                gyro(-40,2);
+                gyro(-42,2);
                 encoderDrive(-46,-46, 1, 4);
                 gyro(0,1);
                 servo(0,1,1.5);
@@ -871,7 +871,7 @@ public class SilverAuto extends LinearOpMode {
                 encoderDrive(-8,-8,.4,2);
                 gyro(-90, 2);
                 encoderDrive(-36,-36, .4, 4);
-                gyro(-50,2);
+                gyro(-52,2);
                 encoderDrive(-40,-40, 1, 4);
                 gyro(45,1);
                 servo(0,1,1.5);
@@ -883,7 +883,7 @@ public class SilverAuto extends LinearOpMode {
                 encoderDrive(24, 24, .4, 3 );
                gyro(-90, 2);
                 encoderDrive(-24,-24, .4, 4);
-                gyro(-45,2);
+                gyro(-47,2);
                 encoderDrive(-60,-60, 1, 4);
                 servo(0,1,1.5);
                //encoderDrive(-18,-18, .4, 4);
