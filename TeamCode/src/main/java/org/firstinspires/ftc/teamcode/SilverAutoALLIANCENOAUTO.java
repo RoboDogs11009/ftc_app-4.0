@@ -844,7 +844,7 @@ public class SilverAutoALLIANCENOAUTO extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            // liftEncoder(12000, 5);
+            liftEncoder(12000, 5);
 
             drive(-.2,1.5);
             gyroInit();
@@ -884,7 +884,7 @@ public class SilverAutoALLIANCENOAUTO extends LinearOpMode {
             }
 
             if (mineralPosition == 2){
-                //gyro(30, 1);
+                gyro(30, 1);
                 encoderDrive(24, 24, .4, 3 );
                gyro(-90, 2);
                 encoderDrive(-24,-24, .4, 4);

@@ -847,7 +847,7 @@ public class SphereAuto extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-           // liftEncoder(12000, 5);
+            liftEncoder(12000, 5);
 
             drive(-.2,1.5);
             gyroInit();

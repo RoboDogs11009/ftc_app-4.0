@@ -45,7 +45,7 @@ import java.util.Locale;
 //john paul is not gay
 //josh is gay
 @Autonomous(name = "Yes", group = "Sensor")
-//@Disabled                       // Comment this out to add to the opmode list
+@Disabled                    // Comment this out to add to the opmode list
 public class Yes extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();

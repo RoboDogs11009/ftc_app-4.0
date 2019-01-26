@@ -9,6 +9,7 @@ import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -29,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 //john paul is not gay
 //josh is gay
 @Autonomous(name = "autoCraterOnly", group = "Sensor")
-//@Disabled                       // Comment this out to add to the opmode list
+@Disabled                     // Comment this out to add to the opmode list
 public class autoCraterOnly extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();

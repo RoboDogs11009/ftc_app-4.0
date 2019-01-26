@@ -23,9 +23,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 //john paul is not fun
 //josh is fun
-@Autonomous(name = "SilverAuto", group = "Sensor")
+@Autonomous(name = "CraterAuto", group = "Sensor")
 // Comment this out to add to the opmode list
-public class SilverAuto extends LinearOpMode {
+public class craterAuto extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
     private DcMotor Lf;
@@ -425,7 +425,7 @@ public class SilverAuto extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             runtime.reset();
             while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS && robot.Lf.isBusy() && robot.Lb.isBusy() && robot.Rf.isBusy() && robot.Rb.isBusy()) )
+                    (runtime.seconds() < timeoutS) )
             {
                 currPosLeftFront = robot.Lf.getCurrentPosition();
                 currPosLeftBack = robot.Lb.getCurrentPosition();
@@ -843,58 +843,8 @@ public class SilverAuto extends LinearOpMode {
 
             liftEncoder(12000, 5);
 
-            drive(-.2,1.5);
-            gyroInit();
-             gyro(20,2);
-             liftEncoder(-2000,1.5);
-
-
-            detectorInit();
-            detectMineral(1, 50, 0.15);
-
-            if (mineralPosition == 0){
-                gyro(-30, 1);
-                encoderDrive(24, 24, .4, 3 );
-                encoderDrive(-8,-8,.4,2);
-                gyro(-90, 2);
-                encoderDrive(-48,-48, .4, 4);
-                gyro(-42,2);
-                encoderDrive(-46,-46, 1, 4);
-              //  gyro(0,1);
-                servo(0,1,1.5);
-
-
-            }
-            if (mineralPosition == 1){
-                gyro(0, 1);
-                encoderDrive(24, 24, .4, 3 );
-                encoderDrive(-8,-8,.4,2);
-                gyro(-90, 2);
-                encoderDrive(-36,-36, .4, 4);
-                gyro(-52,2);
-                encoderDrive(-40,-40, 1, 4);
-               // gyro(45,1);
-                servo(0,1,1.5);
-
-            }
-
-            if (mineralPosition == 2){
-                 gyro(30, 1);
-                encoderDrive(24, 24, .4, 3 );
-               gyro(-90, 2);
-                encoderDrive(-24,-24, .4, 4);
-                gyro(-47,2);
-                encoderDrive(-60,-60, 1, 4);
-                servo(0,1,1.5);
-               //encoderDrive(-18,-18, .4, 4);
-               // gyro(-47,2);
-               // encoderDrive(-48,-60, .5, 4);
-
-
-            }
-
-
-
+            strafeLeft(-0.5, 0.2);
+            encoderDrive(60, 60, 0.7, 5);
 
             waiting(30);
        }
