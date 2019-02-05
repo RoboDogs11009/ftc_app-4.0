@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -24,9 +26,12 @@ public class yesDrive extends OpMode {
     private DcMotor Rf = null;
     private DcMotor Rb = null;
     private DcMotor Li = null;
-    private DcMotor In = null;
     private DcMotor Ra = null;
     private DcMotor La = null;
+    private DcMotor El = null;
+
+    private CRServo L  = null;
+    private CRServo R  = null;
 
     private AnalogInput armPot;
 
@@ -41,7 +46,7 @@ public class yesDrive extends OpMode {
     potentiometer pot = new potentiometer();
 
     double armDegree = 0;
-    double armTarget = 20;
+    double armTarget = 200;
 
     double armPower;
     double armExtendPower = 0;
@@ -56,11 +61,16 @@ public class yesDrive extends OpMode {
 
     //PID Constants
 
-    double ARMPID_KP = 0;
+    double ARMPID_KP = 0.01;
     double ARMPID_KD = 0;
     double ARMPID_KI = 0;
 
     double ARMEXTENDPID_KP = 0;
+
+    int elbowTarget = 0;
+    int elbowCurrent =0;
+    int elbowError = 0;
+    double elbowKp = .01;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -70,14 +80,18 @@ public class yesDrive extends OpMode {
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        Lf  = hardwareMap.get(DcMotor.class, "Lf");
+        Lf = hardwareMap.get(DcMotor.class, "Lf");
         Lb = hardwareMap.get(DcMotor.class, "Lb");
-        Rf  = hardwareMap.get(DcMotor.class, "Rf");
+        Rf = hardwareMap.get(DcMotor.class, "Rf");
         Rb = hardwareMap.get(DcMotor.class, "Rb");
         Li = hardwareMap.get(DcMotor.class, "Li");
-        In = hardwareMap.get(DcMotor.class, "In");
         Ra = hardwareMap.get(DcMotor.class, "Ra");
         La = hardwareMap.get(DcMotor.class, "La");
+        El = hardwareMap.get(DcMotor.class, "El");
+        L  = hardwareMap.get(CRServo.class, "L");
+        R  = hardwareMap.get(CRServo.class, "R");
+        armPot = hardwareMap.get(AnalogInput.class, "armPot");
+
 
 
         Lf.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -85,18 +99,22 @@ public class yesDrive extends OpMode {
         Rf.setDirection(DcMotorSimple.Direction.FORWARD);
         Rb.setDirection(DcMotorSimple.Direction.FORWARD);
         Li.setDirection(DcMotorSimple.Direction.FORWARD);
-        In.setDirection(DcMotorSimple.Direction.FORWARD);
-        Ra.setDirection(DcMotorSimple.Direction.FORWARD);
-        La.setDirection(DcMotorSimple.Direction.REVERSE);
+        Ra.setDirection(DcMotorSimple.Direction.REVERSE);
+        La.setDirection(DcMotorSimple.Direction.FORWARD);
+        El.setDirection(DcMotorSimple.Direction.REVERSE);
+        L.setDirection(CRServo.Direction.REVERSE);
+        R.setDirection(CRServo.Direction.FORWARD);
 
-        Lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Li.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        In.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Ra.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        La.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Ra.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        La.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        El.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        El.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
@@ -114,7 +132,7 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void start() {
-       // armTarget = 20;
+
     }
 
     /*
@@ -122,23 +140,48 @@ public class yesDrive extends OpMode {
      */
     @Override
     public void loop() {
-      //  armVolatge = armPot.getVoltage();
-      //  armDegree = pot.degree(armVolatge);
+        armVolatge = armPot.getVoltage();
+        armDegree = pot.degree(armVolatge);
 
       double Speed = -gamepad1.left_stick_y;
         double Turn = gamepad1.right_stick_x;
         double Strafe = -gamepad1.left_stick_x;
         holonomic(Speed, Turn, Strafe, MAX_SPEED );
 
-        armPower = gamepad2.left_trigger;
-        if (gamepad2.left_trigger == 0){
-            armPower = -gamepad2.right_trigger;
+
+
+
+
+        intakePower = gamepad1.left_trigger;
+        if (gamepad1.left_trigger == 0 )
+        {
+            intakePower = -gamepad1.right_trigger;
+        }
+        L.setPower(intakePower);
+        R.setPower(intakePower);
+
+        if (gamepad1.y){
+            elbowTarget -= 10;
+           //if (elbowTarget <= 0){
+           //     elbowTarget = 0;
+           // }
+        }
+        if (gamepad1.x){
+            elbowTarget += 10;
+            //if (elbowTarget >=590){
+           //     elbowTarget = 590;
+           // }
         }
 
-        La.setPower(armPower);
-        Ra.setPower(armPower);
+        //SET Elbow Postion
+        El.setTargetPosition(elbowTarget);
+        elbowCurrent = El.getCurrentPosition();
+        elbowError = elbowTarget - elbowCurrent;
+        El.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        El.setPower(elbowError*elbowKp);
 
-        if (gamepad2.x){
+
+       /* if (gamepad2.x){
             intakePower = 0.75;
         }
         else if (gamepad2.y){
@@ -149,6 +192,7 @@ public class yesDrive extends OpMode {
         }
 
         In.setPower(intakePower);
+
 
         if (gamepad2.a){
             liftPower = 1;
@@ -161,22 +205,32 @@ public class yesDrive extends OpMode {
         }
 
         Li.setPower(liftPower);
+        */
 
-       /* if (gamepad2.right_bumper){
+        if (gamepad2.right_bumper){
             armTarget -= 1;
-            if (armTarget <=17){
-                armTarget = 17;
+            if (armTarget <=100){
+                armTarget = 100;
             }
         }
 
         if (gamepad2.left_bumper){
             armTarget += 1;
-            if (armTarget >=190){
-                armTarget = 190;
+            if (armTarget >=260){
+                armTarget = 260;
             }
         }
-        */
-        //arm(armTarget);
+        if (gamepad1.right_bumper){
+            armTarget = 100;
+
+        }
+
+        if (gamepad1.left_bumper){
+            armTarget = 200;
+
+        }
+
+        arm(armTarget);
 
         /* if (gamepad1.left_bumper && holdLift == false){
             Li.setPower(-1);
@@ -225,15 +279,19 @@ public class yesDrive extends OpMode {
 
         // Send telemetry message to signify robot running;
 
-        telemetry.addData("Speed",  "%.2f", Speed);
-        telemetry.addData("Turn",  "%.2f", Turn);
-        telemetry.addData("Strafe", "%.2f", Strafe);
+       // telemetry.addData("Speed",  "%.2f", Speed);
+        //telemetry.addData("Turn",  "%.2f", Turn);
+       // telemetry.addData("Strafe", "%.2f", Strafe);
         telemetry.addData("MAX Speed", "%.2f", MAX_SPEED);
-       // telemetry.addData("armTarget",  "%.2f", armTarget);
-       // telemetry.addData("armDegree",  "%.2f", armDegree);
-        telemetry.addData("Arm Power",  "%.2f", armPower);
-        telemetry.addData("Intake Power",  "%.2f", intakePower);
+        telemetry.addData("armTarget",  "%.2f", armTarget);
+        telemetry.addData("armDegree",  "%.2f", armDegree);
 
+
+        telemetry.addData("Arm Power",  "%.2f", armPower);
+
+        telemetry.addData("Intake Power",  "%.2f", intakePower);
+        telemetry.addData("Elbow Error", elbowError);
+        telemetry.addData("Elbow Power", elbowError*elbowKp);
     }
 
     /*
@@ -244,7 +302,7 @@ public class yesDrive extends OpMode {
         //Li.setPower(liftPower);
     }
 
-  /*  public void arm(double target){
+    public void arm(double target){
         double error = target - armDegree;
         currentError = error;
 
@@ -273,7 +331,7 @@ public class yesDrive extends OpMode {
         currentError = lastError;
 
     }
-    */
+
     public void holonomic(double Speed, double Turn, double Strafe, double MAX_SPEED) {
 
 //      Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe

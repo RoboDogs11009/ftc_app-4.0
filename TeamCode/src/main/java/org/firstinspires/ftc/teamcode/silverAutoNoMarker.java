@@ -841,7 +841,7 @@ public class silverAutoNoMarker extends LinearOpMode {
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
 
-            liftEncoder(12000, 5);
+            liftEncoder(9000, 5);
 
             drive(-.2,1.5);
             gyroInit();
@@ -851,6 +851,8 @@ public class silverAutoNoMarker extends LinearOpMode {
 
             detectorInit();
             detectMineral(1, 50, 0.15);
+            telemetry.addData("Mineral Position", mineralPosition);
+            telemetry.update();
 
             if (mineralPosition == 0){
                 gyro(-30, 1);
@@ -879,10 +881,7 @@ public class silverAutoNoMarker extends LinearOpMode {
             }
 
             if (mineralPosition == 2){
-                 gyro(30, 1);
-                encoderDrive(24, 24, .4, 3 );
-               gyro(-30, 2);
-                encoderDrive(12,12, .7, 4);
+                encoderDrive(50, 50, .7, 3 );
              //   gyro(-47,2);
               //  encoderDrive(-60,-60, 1, 4);
               //  servo(0,1,1.5);

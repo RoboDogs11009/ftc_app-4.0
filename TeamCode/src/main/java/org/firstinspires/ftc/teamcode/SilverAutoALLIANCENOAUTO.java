@@ -854,6 +854,8 @@ public class SilverAutoALLIANCENOAUTO extends LinearOpMode {
 
             detectorInit();
             detectMineral(1, 50, 0.15);
+            telemetry.addData("Mineral Position", mineralPosition);
+            telemetry.update();
 
             if (mineralPosition == 0){
                 gyro(-30, 1);

@@ -23,9 +23,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 //john paul is not fun
 //josh is fun
-@Autonomous(name = "SilverAuto", group = "Sensor")
+@Autonomous(name = "SilverAuto2", group = "Sensor")
 // Comment this out to add to the opmode list
-public class SilverAuto extends LinearOpMode {
+public class SilverAuto2 extends LinearOpMode {
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
     private DcMotor Lf;
@@ -851,6 +851,8 @@ public class SilverAuto extends LinearOpMode {
 
             detectorInit();
             detectMineral(1, 50, 0.15);
+            telemetry.addData("Mineral Position", mineralPosition);
+            telemetry.update();
 
             if (mineralPosition == 0){
                 gyro(-30, 1);
@@ -879,7 +881,7 @@ public class SilverAuto extends LinearOpMode {
             }
 
             if (mineralPosition == 2){
-                 gyro(30, 1);
+               //  gyro(30, 1);
                 encoderDrive(24, 24, .4, 3 );
                gyro(-90, 2);
                 encoderDrive(-24,-24, .4, 4);

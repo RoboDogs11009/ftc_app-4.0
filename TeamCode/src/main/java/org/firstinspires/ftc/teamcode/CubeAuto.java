@@ -840,9 +840,9 @@ public class CubeAuto extends LinearOpMode {
         // loop and read the RGB and distance data.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         while (opModeIsActive()) {
-            liftEncoder(12000, 5);
+            liftEncoder(9000, 5);
 
-            drive(-.2,1.5);
+            drive(-.2,1);
             gyroInit();
              gyro(20,2);
              liftEncoder(-2000,1);
@@ -850,12 +850,14 @@ public class CubeAuto extends LinearOpMode {
 
             detectorInit();
             detectMineral(1, 50, 0.15);
+            telemetry.addData("Mineral Position", mineralPosition);
+            telemetry.update();
 
             if (mineralPosition == 0){
                 gyro(-30, 1);
                 encoderDrive(40, 40, .5, 3 );
                 gyro(-90, 2);
-                encoderDrive(-22,-22, .4, 4);
+                encoderDrive(-18,-18, .4, 4);
                 servo(0,1,2);
                 encoderDrive(-18,-18, .4, 4);
                 gyro(-47,2);
@@ -875,10 +877,10 @@ public class CubeAuto extends LinearOpMode {
 
             }
             if (mineralPosition == 2){
-               gyro(30, 1);
-                encoderDrive(40, 40, .5, 3 );
+               //gyro(30, 1);
+                encoderDrive(40, 40, .5, 3 ); //CHANGE
                 gyro(-90, 2);
-                encoderDrive(16,16, .4, 4);
+                encoderDrive(18,18, .4, 4);
                 servo(0,1,1.5);
                 encoderDrive(-18,-18, .4, 4);
                 gyro(-47,2);
