@@ -33,6 +33,9 @@ public class yesDrive extends OpMode {
     private CRServo L  = null;
     private CRServo R  = null;
 
+    private Servo Lw   = null;
+    private Servo Rw   = null;
+
     private AnalogInput armPot;
 
     double liftPower = 0;
@@ -42,6 +45,10 @@ public class yesDrive extends OpMode {
 
     double MAX_SPEED = 1.0;
     double armVolatge = 0;
+
+    double          clawOffset      = 0;                       // Servo mid position
+    final double    CLAW_SPEED      = 0.02 ;                   // sets rate to move servo
+    private static final double MID_SERVO       =  0.5 ;
 
     potentiometer pot = new potentiometer();
 
@@ -90,6 +97,8 @@ public class yesDrive extends OpMode {
         El = hardwareMap.get(DcMotor.class, "El");
         L  = hardwareMap.get(CRServo.class, "L");
         R  = hardwareMap.get(CRServo.class, "R");
+        Lw = hardwareMap.get(Servo.class, "Lw");
+        Rw = hardwareMap.get(Servo.class, "Rw");
         armPot = hardwareMap.get(AnalogInput.class, "armPot");
 
 
@@ -152,21 +161,21 @@ public class yesDrive extends OpMode {
 
 
 
-        intakePower = gamepad1.left_trigger;
+        intakePower = gamepad2.left_trigger;
         if (gamepad1.left_trigger == 0 )
         {
-            intakePower = -gamepad1.right_trigger;
+            intakePower = -gamepad2.right_trigger;
         }
         L.setPower(intakePower);
         R.setPower(intakePower);
 
-        if (gamepad1.y){
+        if (gamepad2.y){
             elbowTarget -= 10;
            //if (elbowTarget <= 0){
            //     elbowTarget = 0;
            // }
         }
-        if (gamepad1.x){
+        if (gamepad2.x){
             elbowTarget += 10;
             //if (elbowTarget >=590){
            //     elbowTarget = 590;
@@ -192,7 +201,7 @@ public class yesDrive extends OpMode {
         }
 
         In.setPower(intakePower);
-
+        */
 
         if (gamepad2.a){
             liftPower = 1;
@@ -205,7 +214,7 @@ public class yesDrive extends OpMode {
         }
 
         Li.setPower(liftPower);
-        */
+
 
         if (gamepad2.right_bumper){
             armTarget -= 1;
@@ -220,7 +229,7 @@ public class yesDrive extends OpMode {
                 armTarget = 260;
             }
         }
-        if (gamepad1.right_bumper){
+        /*if (gamepad1.right_bumper){
             armTarget = 100;
 
         }
@@ -229,7 +238,7 @@ public class yesDrive extends OpMode {
             armTarget = 200;
 
         }
-
+        */
         arm(armTarget);
 
         /* if (gamepad1.left_bumper && holdLift == false){
@@ -276,6 +285,15 @@ public class yesDrive extends OpMode {
             MAX_SPEED = 0.3;
         }
 
+
+        if (gamepad2.dpad_up)
+            clawOffset += CLAW_SPEED;
+        else if (gamepad2.dpad_down)
+            clawOffset -= CLAW_SPEED;
+
+        // Move both servos to new position.  Assume servos are mirror image of each other.
+        Lw.setPosition(MID_SERVO + clawOffset);
+        Rw.setPosition(MID_SERVO - clawOffset);
 
         // Send telemetry message to signify robot running;
 
